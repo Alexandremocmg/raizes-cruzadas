@@ -12,7 +12,9 @@ descobre o que sempre correu por baixo de todas as ilhas.
 
 Funciona no PC e no celular, sem instalar nada. Um capítulo dura de 15 a 20 minutos.
 
-**Projeto aberto e feito em comunidade.** Para ajudar, veja o [guia de contribuição](CONTRIBUTING.md).
+**Projeto aberto e feito em comunidade.** Jogou? Conte como foi nas
+[Discussions](https://github.com/Alexandremocmg/raizes-cruzadas/discussions). Para ajudar a construir,
+veja o [guia de contribuição](CONTRIBUTING.md).
 
 Visão completa, mecânicas, Bíblia Visual e plano de assets: [`docs/GDD.md`](docs/GDD.md).
 

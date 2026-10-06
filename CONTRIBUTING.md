@@ -16,12 +16,17 @@ python -m http.server 5180 --bind 127.0.0.1
 ```
 Abra <http://127.0.0.1:5180>. Com `?debug` no endereço, o estado do jogo fica em `window.rc`.
 
+## Onde conversar
+- **[Discussions](https://github.com/Alexandremocmg/raizes-cruzadas/discussions):** relatos de quem
+  jogou, ideias, perguntas e propostas de capítulos ou mecânicas. Comece por aqui.
+- **Issues:** para algo concreto a corrigir ou fazer (um erro, uma tarefa já combinada).
+
 ## Formas de ajudar
-- **Testar com grupos** (escolas, igrejas, jovens) e contar o que funcionou e o que confundiu. Abra
-  uma *issue* com o relato.
+- **Testar com grupos** (escolas, igrejas, jovens) e contar o que funcionou e o que confundiu, em
+  *Discussions › Show and tell*.
 - **Código:** correções, desempenho em celular, acessibilidade.
 - **Conteúdo:** diálogos, páginas do Diário, o guia do educador, novos capítulos (proponha primeiro
-  numa *issue*).
+  em *Discussions › Ideas*).
 - **Arte e som:** sempre seguindo a Bíblia Visual (low-poly luminoso, a Fonte é a única luz fria e
   vem de baixo).
 
