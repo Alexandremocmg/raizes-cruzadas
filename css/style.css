@@ -5,6 +5,7 @@
   --ouro: #f3b94d;
   --agua: #39c3d6;
   --sombra: 0 10px 30px rgba(40, 30, 20, 0.25);
+  --tx: 1; /* escala do texto (Ajustes › Tamanho do texto) */
 }
 
 * { box-sizing: border-box; }
@@ -33,7 +34,7 @@ html, body {
   display: inline-flex; align-items: center; gap: 8px;
   padding: 8px 14px; border-radius: 999px; border: 0;
   background: var(--creme); color: var(--tinta);
-  font: 800 16px 'Nunito', sans-serif; box-shadow: var(--sombra);
+  font: 800 calc(16px * var(--tx)) 'Nunito', sans-serif; box-shadow: var(--sombra);
 }
 button.pill { cursor: pointer; }
 button.pill.novo { box-shadow: 0 0 0 3px var(--ouro), var(--sombra); }
@@ -51,10 +52,10 @@ button.pill.novo { box-shadow: 0 0 0 3px var(--ouro), var(--sombra); }
   width: min(560px, calc(100vw - 32px));
   padding: 14px 20px; border-radius: 18px;
   background: var(--creme); box-shadow: var(--sombra);
-  font-size: 17px; line-height: 1.45; text-align: center; z-index: 6;
+  font-size: calc(17px * var(--tx)); line-height: 1.45; text-align: center; z-index: 6;
   animation: entra 0.5s ease;
 }
-#fala b { display: block; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tinta-suave); margin-bottom: 2px; }
+#fala b { display: block; font-size: calc(13px * var(--tx)); letter-spacing: 0.08em; text-transform: uppercase; color: var(--tinta-suave); margin-bottom: 2px; }
 @keyframes entra { from { opacity: 0; transform: translate(-50%, -8px); } }
 
 /* ---------- Ações ---------- */
@@ -67,7 +68,7 @@ button.pill.novo { box-shadow: 0 0 0 3px var(--ouro), var(--sombra); }
   display: inline-flex; align-items: center; gap: 8px;
   padding: 12px 18px; border-radius: 14px; border: 0; cursor: pointer;
   background: var(--creme); color: var(--tinta); box-shadow: var(--sombra);
-  font: 700 16px 'Nunito', sans-serif;
+  font: 700 calc(16px * var(--tx)) 'Nunito', sans-serif;
   animation: entraAcao 0.25s ease;
 }
 .acao:hover { background: #fff; }
@@ -82,11 +83,11 @@ button.pill.novo { box-shadow: 0 0 0 3px var(--ouro), var(--sombra); }
 .rotulo {
   position: absolute; left: 0; top: 0; white-space: nowrap;
   padding: 3px 10px; border-radius: 999px;
-  background: rgba(255, 249, 238, 0.8); font: 700 13px 'Nunito', sans-serif;
+  background: rgba(255, 249, 238, 0.8); font: 700 calc(13px * var(--tx)) 'Nunito', sans-serif;
 }
 .flutua {
   position: absolute; left: 0; top: 0; white-space: nowrap;
-  font: 800 15px 'Nunito', sans-serif; color: #fff;
+  font: 800 calc(15px * var(--tx)) 'Nunito', sans-serif; color: #fff;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
   animation: sobe 2.4s ease-out forwards;
 }
@@ -112,12 +113,12 @@ button.pill.novo { box-shadow: 0 0 0 3px var(--ouro), var(--sombra); }
 .painel {
   position: relative; width: min(640px, 100%); max-height: calc(100vh - 32px); overflow: auto;
   padding: 26px 26px 22px; border-radius: 22px;
-  background: #fff9ee; box-shadow: var(--sombra); line-height: 1.5;
+  background: #fff9ee; box-shadow: var(--sombra); line-height: 1.5; font-size: calc(16px * var(--tx));
   animation: entraAcao 0.3s ease;
 }
-.painel h2 { margin: 0 0 8px; font-size: 26px; }
+.painel h2 { margin: 0 0 8px; font-size: calc(26px * var(--tx)); }
 .painel h3 { margin: 18px 0 6px; }
-.painel .nota { color: var(--tinta-suave); font-size: 14px; margin-top: 0; }
+.painel .nota { color: var(--tinta-suave); font-size: calc(14px * var(--tx)); margin-top: 0; }
 .painel .fechar {
   position: absolute; top: 10px; right: 12px; border: 0; background: none;
   font-size: 28px; cursor: pointer; color: var(--tinta-suave);
@@ -125,15 +126,15 @@ button.pill.novo { box-shadow: 0 0 0 3px var(--ouro), var(--sombra); }
 .opcoes { display: grid; gap: 10px; margin-top: 14px; }
 .opcao {
   text-align: left; padding: 14px 16px; border-radius: 14px; cursor: pointer;
-  border: 2px solid #eadcc6; background: #fff; font: 600 15px 'Nunito', sans-serif; color: var(--tinta);
+  border: 2px solid #eadcc6; background: #fff; font: 600 calc(15px * var(--tx)) 'Nunito', sans-serif; color: var(--tinta);
 }
-.opcao b { display: block; font-size: 17px; }
+.opcao b { display: block; font-size: calc(17px * var(--tx)); }
 .opcao:hover { border-color: var(--ouro); }
 .opcao.fonte { border-color: #9fe7f0; background: linear-gradient(135deg, #f2feff, #fff); }
 
 .btn {
   padding: 12px 20px; border-radius: 14px; border: 2px solid #eadcc6; cursor: pointer;
-  background: #fff; font: 700 16px 'Nunito', sans-serif; color: var(--tinta); margin: 6px 6px 0 0;
+  background: #fff; font: 700 calc(16px * var(--tx)) 'Nunito', sans-serif; color: var(--tinta); margin: 6px 6px 0 0;
 }
 .btn.primario { background: var(--tinta); border-color: var(--tinta); color: #fff; }
 
@@ -141,7 +142,7 @@ button.pill.novo { box-shadow: 0 0 0 3px var(--ouro), var(--sombra); }
 .cartas { display: grid; gap: 8px; margin-top: 10px; }
 .carta {
   text-align: left; padding: 12px 14px; border-radius: 12px; cursor: pointer;
-  border: 2px dashed #cdbba3; background: #fff; font: 600 15px 'Nunito', sans-serif; color: var(--tinta);
+  border: 2px dashed #cdbba3; background: #fff; font: 600 calc(15px * var(--tx)) 'Nunito', sans-serif; color: var(--tinta);
 }
 .carta.certa { border-style: solid; border-color: var(--ouro); background: #fff5dc; cursor: default; }
 .carta.errada { animation: treme 0.5s; border-color: #d98b7a; }
@@ -152,7 +153,7 @@ button.pill.novo { box-shadow: 0 0 0 3px var(--ouro), var(--sombra); }
 /* Diário */
 .pagina { border-top: 1px solid #eadcc6; padding-top: 6px; margin-top: 12px; }
 .pagina blockquote { margin: 8px 0; padding: 8px 14px; border-left: 4px solid var(--ouro); background: #fdf4e2; font-style: italic; }
-.pagina cite { display: block; margin-top: 4px; font-style: normal; font-weight: 700; font-size: 13px; color: var(--tinta-suave); }
+.pagina cite { display: block; margin-top: 4px; font-style: normal; font-weight: 700; font-size: calc(13px * var(--tx)); color: var(--tinta-suave); }
 .pagina .pergunta { font-weight: 700; }
 
 /* ---------- Tela inicial ---------- */
@@ -173,3 +174,38 @@ button.pill.novo { box-shadow: 0 0 0 3px var(--ouro), var(--sombra); }
   .acao { font-size: 15px; padding: 12px 14px; }
   .acao kbd { display: none; }
 }
+
+/* ---------- Painel lateral (Caverna do Outro Olho): a cena continua visível ---------- */
+#overlay.lateral {
+  background: transparent; backdrop-filter: none;
+  place-items: center end; pointer-events: none;
+}
+#overlay.lateral .painel { pointer-events: auto; width: min(430px, 100%); }
+@media (max-width: 760px) {
+  #overlay.lateral { place-items: end center; padding: 8px; }
+  #overlay.lateral .painel { width: 100%; max-height: 54vh; padding: 18px 18px 14px; }
+}
+
+/* ---------- Ajustes ---------- */
+.ajuste { margin: 14px 0; }
+.ajuste b { display: block; margin-bottom: 6px; }
+.seg { display: flex; gap: 6px; flex-wrap: wrap; }
+.seg button {
+  padding: 10px 16px; border-radius: 12px; border: 2px solid #eadcc6; background: #fff;
+  font: 700 calc(15px * var(--tx)) 'Nunito', sans-serif; color: var(--tinta); cursor: pointer;
+}
+.seg button.ativo { border-color: var(--ouro); background: #fff5dc; }
+.painel a { color: #8a5a1f; font-weight: 700; }
+.reiniciar { margin-top: 16px; padding-top: 10px; border-top: 1px solid #eadcc6; }
+
+/* ---------- Tela inicial: carregamento, continuar, links ---------- */
+#carga { width: min(320px, 80vw); margin: 0 auto 18px; }
+#carga .barra { height: 8px; border-radius: 999px; background: rgba(255, 249, 238, 0.2); overflow: hidden; }
+#carga .barra i { display: block; height: 100%; width: 0; background: #ffd27a; border-radius: 999px; transition: width 0.3s ease; }
+#carga p { margin: 8px 0 0; font-size: 14px; opacity: 0.85; }
+#inicio .botoes { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+#inicio .btn:disabled { opacity: 0.45; cursor: progress; }
+#inicio .btn.secundario { background: transparent; color: #fff9ee; border-color: rgba(255, 249, 238, 0.5); }
+#inicio .links { font-size: 13px; opacity: 0.8; margin-top: 8px; }
+#inicio .links a { color: #ffd27a; }
+#inicio .dica a { color: #ffd27a; }

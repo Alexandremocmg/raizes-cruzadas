@@ -10,6 +10,10 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { ui } from './ui.js';
 import { PAGINAS } from './diario.js';
 import { lerp, damp, dampAngulo, smooth } from './util.js';
+import { carga } from './carga.js';
+import { salvar } from './salvar.js';
+import { som } from './som.js';
+import { ajustes } from './ajustes.js';
 
 const canvas = document.getElementById('c');
 const mundo = criarMundo(canvas);
@@ -95,7 +99,7 @@ scene.add(pedestal);
 // Veio 1,45× mais largo que alto; esticamos para 2,6 de largura e ~0,9 de altura (deformação
 // moderada, sem amassar as flores). `CENTRO.topo` é onde ficam os objetos e a Lume.
 const CENTRO = { topo: 0.55 };
-new GLTFLoader().load('assets/tripo/centro/tripo-out/centro-b8bc24bd/model.glb', (gltf) => {
+carga.registrar('centro', new GLTFLoader().loadAsync('assets/tripo/centro/tripo-out/centro-b8bc24bd/model.glb')).then((gltf) => {
   const m = gltf.scene;
   m.traverse((o) => {
     if (o.isMesh) {
@@ -113,11 +117,11 @@ new GLTFLoader().load('assets/tripo/centro/tripo-out/centro-b8bc24bd/model.glb',
   CENTRO.topo = 0.08 + (caixa.max.y - caixa.min.y) - 0.06; // o topo tem uma borda; os objetos ficam dentro dela
   for (const o of Object.values(objCentro)) o.position.y = CENTRO.topo;
   if (E.centro === 'lume') npcs.lume.fig.raiz.position.y = CENTRO.topo;
-}, undefined, (erro) => console.error('[centro] não carregou o modelo; usando o pedestal provisório.', erro));
+}).catch((erro) => console.error('[centro] não carregou o modelo; usando o pedestal provisório.', erro));
 
 // Árvore-mãe (docs/objetos/arvore-mae.md): perde a cor junto com a saúde da ilha do jogador.
 const arvoreMae = { mats: [] };
-new GLTFLoader().load('assets/tripo/arvore-mae/tripo-out/arvore-mae-4321daba/model_copa_verde.glb', (gltf) => {
+carga.registrar('arvore-mae', new GLTFLoader().loadAsync('assets/tripo/arvore-mae/tripo-out/arvore-mae-4321daba/model_copa_verde.glb')).then((gltf) => {
   const m = gltf.scene;
   m.traverse((o) => {
     if (o.isMesh) {
@@ -135,7 +139,7 @@ new GLTFLoader().load('assets/tripo/arvore-mae/tripo-out/arvore-mae-4321daba/mod
   m.rotation.y = 0.6;
   scene.add(m);
   casa.colisores.push({ x: ARVORE_MAE.x, z: ARVORE_MAE.z, r: 0.8 }); // tronco
-}, undefined, (erro) => console.error('[arvore-mae] não carregou o modelo.', erro));
+}).catch((erro) => console.error('[arvore-mae] não carregou o modelo.', erro));
 
 const matAnel = new THREE.MeshBasicMaterial({ color: new THREE.Color('#ffd27a').multiplyScalar(2), transparent: true, opacity: 0, depthWrite: false });
 const anelCentro = new THREE.Mesh(new THREE.RingGeometry(1.75, 1.95, 28), matAnel);
@@ -245,7 +249,9 @@ for (const id of NPC_IDS) {
   const n = npcs[id];
   n.casa = V(D[id].x, 0.15, D[id].z);
   n.fig.raiz.position.copy(n.casa);
-  n.fig.raiz.lookAt(0, 0.15, 0);
+  // Só o giro em Y. (lookAt deixava giros de 180° em X e Z quando o personagem olhava "para trás",
+  // como o Ferro, ao sul; depois o código só mexe no Y e ele acabava de costas para o jogador.)
+  n.fig.raiz.rotation.set(0, Math.atan2(-n.casa.x, -n.casa.z), 0);
   n.rotulo = ui.criarRotulo(n.nome);
   n.cinza = 0;
   scene.add(n.fig.raiz);
@@ -254,10 +260,12 @@ for (const id of NPC_IDS) {
 // Personagens animados (Tripo + Mixamo). A figura provisória fica até o GLB carregar — e, se
 // falhar, continua no lugar, mas o erro aparece no console (fallback silencioso esconde defeito).
 function trocarPorAnimado(id, url, altura, aoCarregar) {
-  carregarPersonagem(url, { altura }).then((fig) => {
+  carga.registrar(id, carregarPersonagem(url, { altura })).then((fig) => {
     const n = npcs[id], velha = n.fig;
     fig.raiz.position.copy(velha.raiz.position);
-    fig.raiz.quaternion.copy(velha.raiz.quaternion);
+    // Só o giro em Y: copiar o quaternion recompõe os ângulos com giros de 180° em X e Z quando o
+    // personagem olha "para trás" (o Ferro, ao sul), e ele passava a andar e olhar de costas.
+    fig.raiz.rotation.set(0, velha.raiz.rotation.y, 0);
     scene.remove(velha.raiz);
     scene.add(fig.raiz);
     n.fig = fig;
@@ -297,7 +305,7 @@ function comportamentoSalvia(dt) {
 }
 // Ferro: desconfiado, acompanha o jogador com o olhar. Abatido na Caverna do Outro Olho.
 // No final, com a Fonte no centro, atravessa a ponte de raiz até a ilha do jogador.
-const F = { falando: 0, abatido: false, rota: null };
+const F = { falando: 0, abatido: false, rota: null, aoChegar: null, olhar: null };
 trocarPorAnimado('ferro', 'assets/modelos/ferro.glb', 1.6);
 function ferroAbatido() {
   F.abatido = true;
@@ -316,7 +324,12 @@ function comportamentoFerro(dt) {
     const dx = alvo.x - r.position.x, dz = alvo.z - r.position.z, d = Math.hypot(dx, dz);
     if (d < 0.08) {
       F.rota.shift();
-      if (!F.rota.length) F.rota = null;
+      if (!F.rota.length) {
+        F.rota = null;
+        const cb = F.aoChegar;
+        F.aoChegar = null;
+        cb?.();
+      }
     } else {
       const passo = Math.min(d, 1.1 * dt);
       r.position.x += (dx / d) * passo;
@@ -327,7 +340,10 @@ function comportamentoFerro(dt) {
       return;
     }
   }
-  if (F.abatido) return; // segura a pose final do "abatido"
+  if (F.abatido) { // segura a pose final do "abatido", virado para o lado de onde vem o jogador
+    if (F.olhar) virarPara(r, F.olhar.x, F.olhar.z, dt * 0.8);
+    return;
+  }
   if (F.falando > 0) {
     F.falando -= dt;
     virarPara(r, J.pos.x, J.pos.z, dt);
@@ -351,7 +367,7 @@ function salviaAgradece() {
 // e no Centro alterna entre feliz (promessa) e triste (exigência e rachadura).
 const L = { espera: 3, alvo: null, falando: 0 };
 function virarPara(r, x, z, dt) {
-  r.rotation.y = dampAngulo(r.rotation.y, Math.atan2(x - r.position.x, z - r.position.z), 6, dt);
+  r.rotation.set(0, dampAngulo(r.rotation.y, Math.atan2(x - r.position.x, z - r.position.z), 6, dt), 0);
 }
 function comportamentoLume(dt) {
   const n = npcs.lume, r = n.fig.raiz;
@@ -396,7 +412,7 @@ scene.add(jog.raiz);
 const J = { pos: V(SPAWN.x, 0.15, SPAWN.z), alvo: null, dir: Math.PI, andando: false, acao: null };
 
 // Jogador animado (Tripo + Mixamo). Mesma política da Lume: provisório até carregar, erro visível se falhar.
-carregarPersonagem('assets/modelos/jogador.glb', { altura: 1.45 }).then((fig) => {
+carga.registrar('jogador', carregarPersonagem('assets/modelos/jogador.glb', { altura: 1.45 })).then((fig) => {
   scene.remove(jog.raiz);
   scene.add(fig.raiz);
   jog = fig;
@@ -539,6 +555,7 @@ function tirarAgua() {
     E.agua += n;
     ui.setAgua(E.agua);
     ui.flutuar(`+${n} água`, acima(J.pos));
+    som.efeito('tirar');
     if (E.ato === 1) umaVez('dica-doca', () => ui.dizer('Agora vá até o círculo de luz na borda leste, de frente para a ilha de Dona Sálvia.', { dur: 5 }));
   });
 }
@@ -557,12 +574,14 @@ function enviarAgua(id) {
   gesto('enviar', () => {
     // A água sai da mão direita, no instante em que o braço solta
     const origem = (jog.animado && jog.posicaoOsso(/RightHand$/, V(0, 0, 0))) || acima(J.pos, 1.2);
+    som.efeito('enviar');
     lancarAgua(id, il, origem);
   });
 }
 
 function lancarAgua(id, il, origem) {
   lancarOrbe(origem, V(il.centro.x, 0.8, il.centro.z), '#9ff3ff', () => {
+    som.efeito('chegar');
     let ganho = 0.15;
     if (E.centro === 'espelho' && E.fase !== 'promessa') {
       ganho = 0.05;
@@ -586,6 +605,7 @@ function lancarAgua(id, il, origem) {
     }
     if (il.alvoSaude >= 0.55 && !pontes[id].crescendo) {
       pontes[id].crescer();
+      som.efeito('ponte');
       ui.dizer(`Uma raiz começou a crescer entre você e ${npcs[id].nome}. Por baixo, onde ninguém vê.`, { dur: 4.5 });
     }
   });
@@ -613,7 +633,7 @@ function conversar(id) {
     else if (il.saude < 0.8) fala = 'Ainda não sei o que fazer com o que você fez.';
     else fala = 'Minha ilha está verde. Eu tinha esquecido dessa cor.';
   }
-  ui.dizer(fala, { quem: n.nome, dur: 4.5 });
+  ui.dizer(fala, { quem: n.nome, dur: 4.5, agora: true });
   if (id === 'lume') L.falando = 4.5;
   if (id === 'salvia') { S.falando = 4.5; S.agradecendo = 0; }
   if (id === 'ferro' && !F.abatido && !F.rota) F.falando = 4.5;
@@ -654,6 +674,7 @@ function colocarNoCentro(id) {
     ui.flutuar('✨', acima(npcs.lume.fig.raiz.position, 1.5));
   }
   if (id === 'fonte') {
+    som.efeito('fonte');
     ui.dizer('A Fonte não pesa sobre a ilha. Ela a sustenta por baixo.', { dur: 4.5 });
     if (casa.racha > 0.1) ui.dizer('As rachaduras não sumiram. Viraram veios de luz.', { dur: 4.5 });
     ui.dizer('Agora leve água a todas as ilhas. Dar já não te esvazia.', { dur: 5 });
@@ -680,24 +701,24 @@ function tirarDoCentro() {
 }
 
 function acoesDisponiveis() {
-  const L = [];
-  if (bloqueado() || J.acao) return L;
+  const lista = [];
+  if (bloqueado() || J.acao) return lista;
   const p = J.pos;
   const perto = (x, z, r) => Math.hypot(p.x - x, p.z - z) < r;
 
-  if (perto(POCO.x, POCO.z, 2.4) && E.poco >= 1) L.push({ rotulo: `Tirar água do poço (${Math.floor(E.poco)})`, fn: tirarAgua });
+  if (perto(POCO.x, POCO.z, 2.4) && E.poco >= 1) lista.push({ rotulo: `Tirar água do poço (${Math.floor(E.poco)})`, fn: tirarAgua });
   if (E.ato >= 2 && perto(0, 0, 3.0)) {
-    if (!E.centro) L.push({ rotulo: 'Escolher o que vai no Centro', fn: abrirMenuCentro });
-    else L.push({ rotulo: `Tirar ${NOMES[E.centro]} do Centro`, fn: tirarDoCentro });
+    if (!E.centro) lista.push({ rotulo: 'Escolher o que vai no Centro', fn: abrirMenuCentro });
+    else lista.push({ rotulo: `Tirar ${NOMES[E.centro]} do Centro`, fn: tirarDoCentro });
   }
   for (const id of NPC_IDS) {
-    if (E.agua > 0 && perto(DOCA[id].x, DOCA[id].z, 2.6)) L.push({ rotulo: `Enviar água → ${npcs[id].nome}`, fn: () => enviarAgua(id) });
+    if (E.agua > 0 && perto(DOCA[id].x, DOCA[id].z, 2.6)) lista.push({ rotulo: `Enviar água → ${npcs[id].nome}`, fn: () => enviarAgua(id) });
   }
   for (const id of NPC_IDS) {
     const q = npcs[id].fig.raiz.position;
-    if (perto(q.x, q.z, 2.6)) L.push({ rotulo: `Conversar com ${npcs[id].nome}`, fn: () => conversar(id) });
+    if (perto(q.x, q.z, 2.6)) lista.push({ rotulo: `Conversar com ${npcs[id].nome}`, fn: () => conversar(id) });
   }
-  return L;
+  return lista;
 }
 
 // ====================================================================
@@ -743,6 +764,7 @@ function iniciarAto2() {
 }
 
 function eventoFerro() {
+  som.efeito('exigencia');
   E.ato = 3;
   E.ocupado = true;
   J.alvo = null;
@@ -757,8 +779,29 @@ function eventoFerro() {
   depois(8.5, abrirCaverna);
 }
 
+/** Câmera que olha para `alvo` de `pos`, deslocando o alvo para o lado para que ele apareça à
+ *  esquerda da tela (painel à direita) — ou no alto da tela, em telas estreitas (painel embaixo). */
+function camComPainel(pos, alvo, desloc = 1.6) {
+  const f = alvo.clone().sub(pos).normalize();
+  const dir = new THREE.Vector3().crossVectors(f, V(0, 1, 0)).normalize();
+  const estreita = innerWidth < 760;
+  const olhar = alvo.clone();
+  if (estreita) {
+    // Tela em pé: o painel ocupa a metade de baixo. Afasta a câmera e sobe o alvo na tela, para o
+    // personagem caber inteiro na metade de cima.
+    pos = alvo.clone().add(pos.clone().sub(alvo).multiplyScalar(1.45));
+    olhar.y -= 1.25;
+  } else {
+    olhar.addScaledVector(dir, desloc);
+  }
+  return { pos, alvo: olhar, vel: 1.6 };
+}
+
 function abrirCaverna() {
   ferroAbatido();
+  const pf = npcs.ferro.fig.raiz.position;
+  E.cam = camComPainel(V(pf.x - 2.6, pf.y + 1.7, pf.z - 3.4), V(pf.x, pf.y + 1.0, pf.z));
+  F.olhar = V(pf.x - 0.4, 0, pf.z - 3.4);
   const cartas = [
     { ok: true, txt: 'Uma memória: a ilha de Ferro foi a primeira a secar, muitos anos atrás.' },
     { ok: false, txt: 'Um julgamento: “Ferro é mau. Sempre foi.”' },
@@ -772,7 +815,7 @@ function abrirCaverna() {
     <p class="nota">Entender não é desculpar. É enxergar a dor por trás do gesto.</p>
     <div class="cartas"></div>
     <p class="cav-msg"></p>
-    <div class="cav-resp"></div>`, { fechavel: false });
+    <div class="cav-resp"></div>`, { fechavel: false, lateral: true });
   const box = p.querySelector('.cartas'), msg = p.querySelector('.cav-msg'), resp = p.querySelector('.cav-resp');
   let acertos = 0;
   for (const c of cartas) {
@@ -785,9 +828,11 @@ function abrirCaverna() {
         b.classList.add('certa');
         b.disabled = true;
         acertos++;
+        som.efeito('certa');
         msg.textContent = acertos < 3 ? 'Isso faz parte da história dele.' : '';
         if (acertos === 3) mostrarRespostas();
       } else {
+        som.efeito('errada');
         b.classList.remove('errada'); void b.offsetWidth; b.classList.add('errada');
         msg.textContent = 'Isso é um julgamento sobre Ferro, não um pedaço da história dele.';
       }
@@ -823,6 +868,7 @@ function abrirCaverna() {
 
 function revelacao() {
   ui.desbloquear('olho');
+  som.efeito('revelacao');
   E.cam = { pos: V(-24, 7, 32), alvo: V(2, -1, 6), vel: 0.45 };
   tween(mundo.marU.uFonte, 'value', 0.85, 5);
   tween(mundo.raiosU.uOp, 'value', 0.6, 5);
@@ -847,17 +893,35 @@ function revelacao() {
 function final() {
   E.ato = 5;
   E.ocupado = true;
+  E.finalFase = 1;
   J.alvo = null;
-  E.cam = { pos: V(0, 72, 36), alvo: V(2, 0, 4), vel: 0.35 };
+  salvar.apagarJogo(); // terminou: reabrir o jogo começa do início
+  som.efeito('fonte');
   tween(mundo.marU.uFonte, 'value', 0.5, 6);
   tween(mundo.raiosU.uOp, 'value', 0.5, 6);
   for (let i = 0; i < 4; i++) tween(mundo.marU.uForca.value, i, 1.3, 6);
+
+  // Parte 1: a câmera acompanha o Ferro atravessando a raiz que a generosidade do jogador fez crescer
+  E.seguirFerro = true;
+  F.aoChegar = finalParte2;
+  depois(1.2, ferroAtravessa);
+  depois(2, () => ui.dizer('Ferro está atravessando a raiz que a sua generosidade fez crescer.', { dur: 5 }));
+  depois(8.5, () => ui.dizer('Ninguém o obrigou. Ele só viu que, agora, havia caminho.', { dur: 5 }));
+  depois(45, () => { if (E.finalFase === 1) finalParte2(); }); // segurança: se algo travar, o final segue
+}
+
+/** Parte 2: a câmera sobe e mostra o mapa por baixo — todas as ilhas ligadas à mesma Fonte. */
+function finalParte2() {
+  if (E.finalFase !== 1) return;
+  E.finalFase = 2;
+  E.seguirFerro = false;
+  E.cam = { pos: V(0, 72, 36), alvo: V(2, 0, 4), vel: 0.35 };
   enfeites.forEach((il, k) => depois(1 + k * 0.4, () => { il.alvoSaude = 1; }));
-  depois(1, ferroAtravessa);
-  depois(2, () => ui.dizer('Olhe o mapa por baixo.', { dur: 3.5 }));
-  depois(6.5, () => ui.dizer('Todas as ilhas, até as que pareciam sozinhas, sempre estiveram ligadas à mesma Fonte.', { dur: 5.5 }));
-  depois(12.5, () => ui.dizer('As ilhas mais bonitas não têm o seu nome.', { dur: 4 }));
-  depois(17, () => ui.dizer('Nada disso foi seu. E por isso pôde ser de todos.', { dur: 5 }));
+  depois(1.5, () => ui.dizer('Olhe o mapa por baixo.', { dur: 3.5 }));
+  depois(6, () => ui.dizer('Todas as ilhas, até as que pareciam sozinhas, sempre estiveram ligadas à mesma Fonte.', { dur: 5.5 }));
+  depois(12, () => ui.dizer('As ilhas mais bonitas não têm o seu nome.', { dur: 4 }));
+  depois(16.5, () => ui.dizer('Nada disso foi seu. E por isso pôde ser de todos.', { dur: 5 }));
+  depois(17, () => som.efeito('final'));
   depois(23, telaFinal);
 }
 
@@ -904,6 +968,7 @@ function atualizarCentro(dt) {
     const fase = E.centroT < 18 ? 'promessa' : E.centroT < 40 ? 'exigencia' : 'rachadura';
     if (fase !== E.fase) {
       E.fase = fase;
+      som.efeito(fase === 'promessa' ? 'promessa' : fase === 'exigencia' ? 'exigencia' : 'rachadura');
       ui.dizer(TEXTO_FASE[c][fase], { dur: 5 });
       if (fase === 'rachadura') { E.chegouRachadura = true; ui.desbloquear('cisternas'); }
     }
@@ -1083,9 +1148,16 @@ function moverJogador(dt) {
 // Câmera
 // ====================================================================
 const camAlvo = new THREE.Vector3(), camOlhar = new THREE.Vector3(), olharAtual = V(0, 0, 0);
+const _pf = new THREE.Vector3();
 function atualizarCamera(dt) {
   let vel;
-  if (E.cam) {
+  if (E.seguirFerro) {
+    // De lado e um pouco acima, olhando o Ferro (e a ponte em arco) andar
+    _pf.copy(npcs.ferro.fig.raiz.position);
+    camAlvo.set(_pf.x - 8, _pf.y + 4.2, _pf.z + 2.5);
+    camOlhar.set(_pf.x, _pf.y + 1.0, _pf.z);
+    vel = 2.2;
+  } else if (E.cam) {
     camAlvo.copy(E.cam.pos);
     camOlhar.copy(E.cam.alvo);
     vel = E.cam.vel ?? 1.2;
@@ -1109,21 +1181,144 @@ function objetivo() {
 }
 
 // ====================================================================
-// Laço principal
+// Salvar e continuar
 // ====================================================================
-document.getElementById('btnComecar').onclick = () => {
-  document.getElementById('inicio').classList.add('hidden');
+const IDS_ILHAS = ['casa', ...NPC_IDS];
+
+/** O jogo só é salvo em momentos calmos: nunca no meio de uma cena (Ferro, final) ou de um gesto. */
+function podeSalvar() {
+  return E.iniciado && E.ato >= 1 && E.ato <= 4 && !E.ocupado && !J.acao && !E.finalFase;
+}
+
+function coletarEstado() {
+  return {
+    ato: E.ato, agua: E.agua, poco: E.poco, centro: E.centro, centroT: E.centroT, fase: E.fase,
+    idolos: [...E.idolos], chegouRachadura: E.chegouRachadura, tempoAto2: E.tempoAto2,
+    fonteLiberada: E.fonteLiberada, doacoes: E.doacoes, avisos: [...E.avisos], tVazio: E.tVazio,
+    saude: Object.fromEntries(IDS_ILHAS.map((id) => [id, [ilhas[id].saude, ilhas[id].alvoSaude]])),
+    pontes: Object.fromEntries(NPC_IDS.map((id) => [id, [pontes[id].prog, pontes[id].crescendo]])),
+    racha: casa.racha, lumeCinza: npcs.lume.cinza,
+    jogador: [J.pos.x, J.pos.z, J.dir],
+    diario: ui.diarioIds(),
+  };
+}
+
+function aplicarEstado(s) {
+  Object.assign(E, {
+    iniciado: true, ocupado: false, cam: null, ato: s.ato,
+    agua: s.agua, poco: s.poco, centro: s.centro, centroT: s.centroT, fase: s.fase,
+    chegouRachadura: s.chegouRachadura, fonteLiberada: s.fonteLiberada, doacoes: s.doacoes,
+    // Se o jogador parou logo antes da cena do Ferro, ela volta daqui a uns segundos (não de repente)
+    tempoAto2: s.chegouRachadura ? Math.min(s.tempoAto2, 45) : s.tempoAto2,
+    tVazio: s.tVazio ?? 0, tExig: 0, tParada: 0,
+    idolos: new Set(s.idolos), avisos: new Set(s.avisos),
+  });
+  for (const id of IDS_ILHAS) ilhas[id].definirSaude(...s.saude[id]);
+  casa.racha = s.racha;
+  casa.ouro = s.centro === 'fonte' ? 1 : 0;
+  for (const id of NPC_IDS) pontes[id].restaurar(...s.pontes[id]);
+  npcs.lume.cinza = s.lumeCinza ?? 0;
+  J.pos.set(s.jogador[0], 0.15, s.jogador[1]);
+  J.dir = s.jogador[2];
+  amb.escuro = 0;
+  mundo.marU.uFonte.value = s.ato >= 4 ? 0.45 : 0.05;
+  mundo.raiosU.uOp.value = s.ato >= 4 ? 0.12 : 0;
+  matAnel.opacity = s.ato >= 2 ? 0.85 : 0;
+  for (const [k, o] of Object.entries(objCentro)) o.visible = k === s.centro;
+  if (s.centro === 'lume') npcs.lume.fig.raiz.position.set(0, CENTRO.topo, 0);
+  ui.restaurarDiario(s.diario);
+  ui.setAgua(E.agua);
+  ui.mostrarHud();
+  // A câmera já começa no lugar certo, sem voar do alto até o jogador
+  camera.position.set(J.pos.x, J.pos.y + 9.5, J.pos.z + 12);
+  olharAtual.set(J.pos.x, J.pos.y + 0.8, J.pos.z);
+}
+
+let tSalva = 0;
+function salvarSeDerPara() {
+  if (podeSalvar()) salvar.gravarJogo(coletarEstado());
+}
+addEventListener('pagehide', salvarSeDerPara);
+document.addEventListener('visibilitychange', () => { if (document.hidden) salvarSeDerPara(); });
+
+// ====================================================================
+// Tela inicial: carregamento, começar, continuar
+// ====================================================================
+const NOMES_ATO = { 1: 'Água que corre', 2: 'O Centro', 3: 'O que corre embaixo', 4: 'A Fonte no centro' };
+const elInicio = document.getElementById('inicio');
+const btnComecar = document.getElementById('btnComecar');
+const btnContinuar = document.getElementById('btnContinuar');
+const jogoSalvo = salvar.lerJogo();
+
+function esconderInicio() { elInicio.classList.add('hidden'); som.iniciar(); }
+
+function comecarNovo() {
+  salvar.apagarJogo();
+  esconderInicio();
   E.iniciado = true;
   intro();
-};
+}
+function continuarJogo() {
+  const s = salvar.lerJogo();
+  if (!s) { comecarNovo(); return; }
+  esconderInicio();
+  aplicarEstado(s);
+  ui.dizer('Bem-vindo de volta. Sua ilha estava como você deixou.', { dur: 4 });
+}
+btnComecar.onclick = comecarNovo;
+btnContinuar.onclick = continuarJogo;
 
+if (jogoSalvo) {
+  const min = Math.max(1, Math.round((Date.now() - jogoSalvo.quando) / 60000));
+  const info = document.getElementById('salvoInfo');
+  info.textContent = `Jogo salvo: ${NOMES_ATO[jogoSalvo.ato] ?? 'capítulo 1'} · há ${min < 60 ? `${min} min` : `${Math.round(min / 60)} h`}`;
+  info.classList.remove('hidden');
+  btnContinuar.classList.remove('hidden');
+  btnComecar.textContent = 'Novo jogo';
+  btnComecar.classList.remove('primario');
+  btnComecar.classList.add('secundario');
+}
+
+let liberado = false;
+function liberarBotoes(mensagem) {
+  if (liberado) return;
+  liberado = true;
+  btnComecar.disabled = false;
+  btnContinuar.disabled = false;
+  document.getElementById('cargaTexto').textContent = mensagem;
+  setTimeout(() => document.getElementById('carga').classList.add('hidden'), 1400);
+}
+carga.aoMudar(({ total, feitos, falhas }) => {
+  document.getElementById('cargaBarra').style.width = `${total ? (feitos / total) * 100 : 0}%`;
+  if (feitos < total) {
+    document.getElementById('cargaTexto').textContent = `Carregando o mundo… ${feitos}/${total}`;
+  } else {
+    liberarBotoes(falhas ? 'Pronto (alguns modelos não carregaram; usaremos figuras simples).' : 'Tudo pronto.');
+  }
+});
+// Conexão lenta demais: deixa começar mesmo assim; o que faltar chega depois
+setTimeout(() => liberarBotoes('Algumas partes ainda estão chegando. Você já pode começar.'), 30000);
+
+// Ajustes e som
+ajustes.aplicar();
+document.getElementById('btnAjustes').onclick = () => ajustes.abrir({ aoReiniciar: () => { salvar.apagarJogo(); location.reload(); } });
+document.getElementById('btnSom').onclick = () => ajustes.alternarSom();
+
+// ====================================================================
+// Laço principal
+// ====================================================================
 // Modo de teste (só com ?debug na URL): expõe o estado para inspeção no console.
 if (new URLSearchParams(location.search).has('debug')) {
-  window.rc = { E, J, ilhas, pontes, npcs, mundo, eventoFerro, revelacao, final, enviarAgua, tirarAgua, colocarNoCentro, get jog() { return jog; } };
+  window.rc = {
+    E, J, ilhas, pontes, npcs, mundo, F, S, L, ui, som, salvar, carga, DOCA, POCO, D, objCentro,
+    eventoFerro, revelacao, final, enviarAgua, tirarAgua, colocarNoCentro, tirarDoCentro, conversar,
+    coletarEstado, aplicarEstado, salvarSeDerPara, podeSalvar, comecarNovo, continuarJogo,
+    get jog() { return jog; }, get CENTRO() { return CENTRO; },
+  };
 }
 
 const relogio = new THREE.Clock();
-let t = 0;
+let t = 0, tClima = 0;
 function quadro() {
   requestAnimationFrame(quadro);
   const dt = Math.min(relogio.getDelta(), 0.05);
@@ -1132,6 +1327,17 @@ function quadro() {
   if (!ui.overlayAberto) {
     atualizarAgenda(dt);
     if (E.iniciado) logica(dt);
+  }
+  tSalva += dt;
+  if (tSalva >= 3) { tSalva = 0; salvarSeDerPara(); }
+  tClima += dt;
+  if (tClima >= 0.8) {
+    tClima = 0;
+    som.clima({
+      escuro: amb.escuro,
+      fonte: E.centro === 'fonte' ? 1 : E.ato >= 4 ? 0.4 : 0,
+      tensao: E.fase === 'rachadura' ? 1 : E.fase === 'exigencia' ? 0.5 : 0,
+    });
   }
   atualizarTweens(dt);
   // Depois do fim, fechar o Diário devolve a tela final (com "Jogar de novo")

@@ -281,6 +281,13 @@ export class Ilha {
     this.flores.instanceMatrix.needsUpdate = true;
   }
 
+  /** Define a saúde de uma vez, sem a transição suave (usado ao restaurar um jogo salvo). */
+  definirSaude(saude, alvo = saude) {
+    this.saude = saude;
+    this.alvoSaude = alvo;
+    this._aplicar(true);
+  }
+
   update(dt) {
     this.saude = damp(this.saude, this.alvoSaude, 1.2, dt);
     this._aplicar(false);
@@ -368,6 +375,14 @@ export class Ponte {
   }
 
   crescer() { this.crescendo = true; }
+
+  /** Põe a ponte no ponto em que estava (usado ao restaurar um jogo salvo). */
+  restaurar(prog, crescendo = prog > 0) {
+    this.prog = prog;
+    this.crescendo = crescendo;
+    this.pronta = prog >= 1;
+    this._desenhar();
+  }
 
   _desenhar() {
     const c1 = this.geo.index.count, c2 = this.geoV.index.count;

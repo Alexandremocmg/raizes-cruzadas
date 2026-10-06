@@ -1,5 +1,6 @@
 // Interface em HTML por cima do canvas: narração, botões de ação, rótulos, overlay e Diário.
 import * as THREE from 'three';
+import { som } from './som.js';
 
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -21,10 +22,21 @@ function projetar(pos, camera) {
 
 export const ui = {
   camera: null,
+  /** 1 = normal · 1,6 = lenta. Multiplica o tempo que cada fala fica na tela (ajuste de acessibilidade). */
+  velNarracao: 1,
 
-  /** Enfileira uma fala de narração (ou de um personagem, com `quem`). */
-  dizer(texto, { quem = '', dur } = {}) {
-    fila.push({ texto, quem, dur: dur ?? Math.max(3, texto.length * 0.06) });
+  /**
+   * Enfileira uma fala de narração (ou de um personagem, com `quem`).
+   * Com `agora`, a fala (de um personagem que o jogador acabou de procurar) passa na frente da fila;
+   * se havia uma narração na tela, ela é cortada e volta logo depois, sem se perder.
+   */
+  dizer(texto, { quem = '', dur, agora = false } = {}) {
+    const item = { texto, quem, dur: (dur ?? Math.max(3, texto.length * 0.06)) * ui.velNarracao };
+    if (!agora) { fila.push(item); return; }
+    if (atual && !atual.quem) fila.unshift({ ...atual, dur: Math.max(2.5, restante) });
+    fila.unshift(item);
+    if (atual) restante = 0;
+    pausa = 0;
   },
 
   update(dt) {
@@ -70,9 +82,14 @@ export const ui = {
 
   get overlayAberto() { return overlayAberto; },
 
-  abrirOverlay(html, { fechavel = true } = {}) {
+  /**
+   * Abre um painel por cima do jogo. Com `lateral`, o painel fica de lado (embaixo, no celular) e o
+   * fundo não escurece: a cena continua visível, como a do Ferro durante a Caverna do Outro Olho.
+   */
+  abrirOverlay(html, { fechavel = true, lateral = false } = {}) {
     const ov = $('overlay');
     const p = ov.querySelector('.painel');
+    ov.classList.toggle('lateral', lateral);
     p.innerHTML = html;
     if (fechavel) {
       const x = document.createElement('button');
@@ -139,6 +156,15 @@ export const ui = {
     desbloqueadas.add(id);
     ui.toast('📖 Nova página no Diário da Fonte');
     $('btnDiario').classList.add('novo');
+    som.efeito('pagina');
+  },
+
+  /** Páginas já desbloqueadas, para salvar o progresso. */
+  diarioIds() { return [...desbloqueadas]; },
+  /** Devolve as páginas de um jogo salvo, sem avisos nem som. */
+  restaurarDiario(ids) {
+    for (const id of ids ?? []) desbloqueadas.add(id);
+    $('btnDiario').classList.remove('novo');
   },
 
   abrirDiario() {
