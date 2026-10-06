@@ -20,7 +20,7 @@ roteiro de aula, perguntas para a conversa e cuidados.
 [Discussions](https://github.com/Alexandremocmg/raizes-cruzadas/discussions). Para ajudar a construir,
 veja o [guia de contribuição](CONTRIBUTING.md).
 
-Visão completa, mecânicas, Bíblia Visual e plano de assets: [`docs/GDD.md`](docs/GDD.md).
+Visão completa, mecânicas, Bíblia Visual e assets: [`docs/GDD.md`](docs/GDD.md) · O que mudou em cada versão: [`CHANGELOG.md`](CHANGELOG.md).
 
 ## Como rodar
 
@@ -74,7 +74,8 @@ endereços e consulte `window.__teste` no console (`log`, `falhas`, `fim`):
 | `src/diario.js` | Páginas do Diário da Fonte, a camada explícita e opcional |
 | `inspecao.html` | Página de inspeção de modelos e clipes (`?modelo=lume`) para aprovar antes de integrar |
 | `scripts/` | `glb_para_fbx_mixamo.py` (Tripo → Mixamo), `montar_personagem_glb.py` (Mixamo → GLB), `validate_glb.mjs`, `recolorir_textura.py` e `tingir_textura.py` (corrigem cores sem gastar créditos), `conferir_fbx.py` |
-| `docs/` | GDD, fichas visuais e andamento de cada personagem e objeto |
+| `docs/` | GDD, fichas visuais e andamento de cada personagem e objeto (`personagens/`, `objetos/`) |
+| `CHANGELOG.md` | Histórico de versões |
 
 ## Licença
 

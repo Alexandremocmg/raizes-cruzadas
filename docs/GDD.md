@@ -27,7 +27,7 @@ o que acontece quando elas ocupam um lugar que não aguentam ocupar.
 |---|---|---|
 | 1. Jogo | Totalmente alegórico. A Fonte nunca é chamada de "Deus". | Todos, inclusive escola laica |
 | 2. Diário da Fonte | Páginas opcionais com o versículo e a reflexão por trás de cada mecânica | Quem quiser ir além |
-| 3. Guia do educador | Perguntas para discussão após cada capítulo *(a fazer)* | Professores e líderes |
+| 3. Guia do educador | Roteiro de aula, perguntas por momento do jogo, cuidados e versão para ambientes laicos (`guia.html`) | Professores e líderes |
 
 ## 4. Mecânicas
 
@@ -48,7 +48,7 @@ O jogador escolhe o que ocupa o centro. Cada ídolo passa por três fases:
 
 | Ídolo | Promessa | Exigência | Rachadura |
 |---|---|---|---|
-| **Cisterna** (segurança) | Poço rende 3× | Não consegue mais dar | Água apodrece rápido |
+| **Cisterna** (segurança) | Poço rende 3,5× | Não consegue mais dar | Água apodrece rápido |
 | **Espelho** (reconhecimento) | Aplausos por toda parte | Dar "sem plateia" rende pouco | As outras ilhas secam |
 | **Lume** (pessoa amada) | Calor e companhia | Lume não pode sair; a ilha dela seca | Lume perde a cor: ninguém aguenta ser o centro de alguém |
 | **A Fonte** *(após o Ato 3)* | — | — | Sustenta por baixo; rachaduras viram ouro; dar não esvazia |

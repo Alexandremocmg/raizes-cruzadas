@@ -1,4 +1,4 @@
-// Raízes Cruzadas — protótipo do capítulo 1.
+// Raízes Cruzadas — capítulo 1.
 // Fluxo: Intro (a ilha é dada) → Ato 1 (dar água) → Ato 2 (o Centro e os ídolos)
 //        → Ato 3 (Ferro e a Caverna do Outro Olho, revelação da Fonte) → Ato 4 (a Fonte no centro) → Final.
 import * as THREE from 'three';
