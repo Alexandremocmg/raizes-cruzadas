@@ -5,7 +5,7 @@ import * as THREE from 'three';
 import { criarMundo } from './mundo.js';
 import { Ilha, Ponte } from './ilha.js';
 import { criarFigura, animarFigura } from './figura.js';
-import { carregarPersonagem } from './personagem.js';
+import { carregarPersonagem, prepararCinza } from './personagem.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { ui } from './ui.js';
 import { PAGINAS } from './diario.js';
@@ -31,6 +31,7 @@ const D = {
 const NPC_IDS = ['salvia', 'lume', 'ferro'];
 const POCO = { x: -3.2, z: 2.4 };
 const SPAWN = { x: 1.6, z: 4.6 };
+const ARVORE_MAE = { x: -4.6, z: -4.0 }; // fundo noroeste: atrás do Centro, sem tapar a câmera
 
 /** Ponto local na borda de `de`, voltado para `para`. */
 function bordaLocal(de, para, f) {
@@ -44,6 +45,7 @@ const casa = new Ilha({
     { x: 0, z: 0, r: 2.4 },
     { x: POCO.x, z: POCO.z, r: 1.4 },
     { x: SPAWN.x, z: SPAWN.z, r: 1.2 },
+    { x: ARVORE_MAE.x, z: ARVORE_MAE.z, r: 2.6 },
     ...NPC_IDS.map((id) => ({ ...bordaLocal(D.casa, D[id], 0.8), r: 1.8 })),
   ],
 });
@@ -112,6 +114,28 @@ new GLTFLoader().load('assets/tripo/centro/tripo-out/centro-b8bc24bd/model.glb',
   for (const o of Object.values(objCentro)) o.position.y = CENTRO.topo;
   if (E.centro === 'lume') npcs.lume.fig.raiz.position.y = CENTRO.topo;
 }, undefined, (erro) => console.error('[centro] não carregou o modelo; usando o pedestal provisório.', erro));
+
+// Árvore-mãe (docs/objetos/arvore-mae.md): perde a cor junto com a saúde da ilha do jogador.
+const arvoreMae = { mats: [] };
+new GLTFLoader().load('assets/tripo/arvore-mae/tripo-out/arvore-mae-4321daba/model_copa_verde.glb', (gltf) => {
+  const m = gltf.scene;
+  m.traverse((o) => {
+    if (o.isMesh) {
+      o.castShadow = o.receiveShadow = true;
+      o.material.flatShading = true;
+      prepararCinza(o.material);
+      arvoreMae.mats.push(o.material);
+    }
+  });
+  const caixa = new THREE.Box3().setFromObject(m);
+  m.scale.setScalar(5.5 / (caixa.max.y - caixa.min.y));
+  m.updateMatrixWorld(true);
+  const caixa2 = new THREE.Box3().setFromObject(m);
+  m.position.set(ARVORE_MAE.x, 0.1 - caixa2.min.y, ARVORE_MAE.z);
+  m.rotation.y = 0.6;
+  scene.add(m);
+  casa.colisores.push({ x: ARVORE_MAE.x, z: ARVORE_MAE.z, r: 0.8 }); // tronco
+}, undefined, (erro) => console.error('[arvore-mae] não carregou o modelo.', erro));
 
 const matAnel = new THREE.MeshBasicMaterial({ color: new THREE.Color('#ffd27a').multiplyScalar(2), transparent: true, opacity: 0, depthWrite: false });
 const anelCentro = new THREE.Mesh(new THREE.RingGeometry(1.75, 1.95, 28), matAnel);
@@ -1116,6 +1140,9 @@ function quadro() {
   ui.setAcoes(acoesDisponiveis());
 
   for (const il of todas) il.update(dt);
+  // A árvore-mãe seca com a ilha: saúde 1 → cor plena; saúde 0 → quase sem cor
+  const cinzaArvore = Math.min(1, Math.max(0, 1 - casa.saude)) * 0.85;
+  for (const mt of arvoreMae.mats) mt.userData.uCinza.value = cinzaArvore;
   for (const id of NPC_IDS) pontes[id].update(dt);
   atualizarOrbes(dt);
 

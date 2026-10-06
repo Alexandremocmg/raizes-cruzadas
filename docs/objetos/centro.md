@@ -44,4 +44,4 @@ Negativo: `statue, figure, person, idol, skull, candles, fire, text, runes, symb
 |---|---|---|
 | 2026-10-06 | Tripo `text_to_model`, P1, `face_limit=4000` (task `b8bc24bd`) | 40 créditos. 3.989 triângulos. Saldo: 75 → 35. Pedra creme, musgo e florzinhas na base, como pedido. **Diferenças:** saiu 1,45× mais largo que alto (não 5×), com uma borda no topo, como uma bacia; as raízes entalhadas viraram facetas de pedra. |
 | 2026-10-06 | Integrado no jogo (`main.js`, bloco `CENTRO`) | Escala (2,6; 1,3; 2,6), resultando em ~0,9 de altura; base em 0,08. `CENTRO.topo` = altura − 0,06 (dentro da borda). Os objetos do Centro e a Lume sobem para o topo. Conferido: a Lume fica apoiada no topo. Se o modelo falhar, o pedestal provisório fica e o erro aparece no console. |
-| — | Aprovação do visual (Alexandre) | Pendente |
+| 2026-10-06 | Aprovação do visual (Alexandre) | Aprovado |

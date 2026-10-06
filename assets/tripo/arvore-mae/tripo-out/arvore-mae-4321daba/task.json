@@ -1,0 +1,29 @@
+{
+  "task_id": "4321daba-9b6e-4297-9ec4-9689856df9ea",
+  "type": "text_to_model",
+  "status": "success",
+  "input": {
+    "pbr": true,
+    "prompt": "Low-poly stylized game prop, a large ancient mother tree with a thick slightly twisted trunk that splits at the bottom into strong curving roots spreading wide over the ground, and a broad rounded canopy made of a few big soft faceted leaf clusters in warm greens, with a few small glowing pale golden blossoms scattered in the canopy. Faceted flat-shaded style with simple rounded shapes, soft warm pastel colors, smooth flat textures, single isolated tree, no ground plane, no background.",
+    "texture": true,
+    "export_uv": true,
+    "face_limit": 6000,
+    "model_version": "P1-20260311",
+    "negative_prompt": "realistic, photorealistic, high detail, pine tree, dead tree, spooky, face on trunk, text, pot, base, pedestal, grass ground, scenery",
+    "texture_alignment": "geometry"
+  },
+  "output_fields": [
+    "model_url",
+    "rendered_image_url",
+    "generated_image_url"
+  ],
+  "credits_consumed": 40,
+  "created_at": "2026-10-06T18:49:18.070056Z",
+  "completed_at": "2026-10-06T18:50:12.868650Z",
+  "files": [
+    "model.glb",
+    "rendered_image.webp",
+    "generated_image.jpeg",
+    "preview.png"
+  ]
+}

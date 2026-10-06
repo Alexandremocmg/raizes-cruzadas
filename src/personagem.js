@@ -9,8 +9,11 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 const _p = new THREE.Vector3();
 
-/** Injeta no material um controle 0..1 que tira a cor da textura (usado na Lume como ídolo). */
-function prepararCinza(mat) {
+/**
+ * Injeta no material um controle 0..1 que tira a cor da textura (`mat.userData.uCinza.value`).
+ * Usado na Lume como ídolo e na árvore-mãe quando a ilha seca.
+ */
+export function prepararCinza(mat) {
   mat.userData.uCinza = { value: 0 };
   mat.onBeforeCompile = (sh) => {
     sh.uniforms.uCinza = mat.userData.uCinza;
