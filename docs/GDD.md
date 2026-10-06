@@ -109,7 +109,7 @@ andamento de cada peça estão em `docs/personagens/` e `docs/objetos/`.
 |---|---|---|
 | Jogador, Lume, Dona Sálvia, Ferro | Tripo P1 + animações do Mixamo | No jogo, aprovados |
 | Centro, árvore-mãe | Tripo P1 | No jogo, aprovados |
-| Poço, Cisterna, Espelho | Tripo P1 | No jogo, **aguardando aprovação do Alexandre** |
+| Poço, Cisterna, Espelho | Tripo P1 | No jogo, aprovados |
 | A Fonte (coluna de luz no Centro, mar, raízes de luz) | Código (shaders) | No jogo. Feita à mão de propósito: luz não se gera como modelo |
 | Ilhas, árvores, flores, pontes de raiz | Código (procedural) | No jogo |
 

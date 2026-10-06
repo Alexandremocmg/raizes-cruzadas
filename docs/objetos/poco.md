@@ -43,4 +43,4 @@ Negativo: `water, liquid, cross, symbols, inscriptions, skull, realistic, high d
 |---|---|---|
 | 2026-10-06 | Tripo `text_to_model`, P1, `face_limit=4000` (task `1675d699`) | 40 créditos. 3.798 triângulos. Pedra clara, telhado laranja de telhas, dois postes, **dois baldes** com corda. Boca escura e vazia, como pedido. |
 | 2026-10-06 | Integrado no jogo (`main.js`, `prepararObjeto`) | Altura 2,4, girado −90° em Y (a "frente" do Tripo é +X; a câmera olha de +Z). A água continua sendo o disco do jogo, ajustado para a boca (raio 0,40; sobe de 30% a 42% da altura conforme o nível). |
-| — | Aprovação do visual (Alexandre) | Pendente |
+| 2026-10-06 | Aprovação do visual (Alexandre) | Aprovado |

@@ -45,4 +45,4 @@ Negativo: `cracks, broken, skull, spikes, evil, realistic, high detail, water sp
 | 2026-10-06 | Tripo `text_to_model`, P1, `face_limit=4000` (task `fffdbbcf`) | 40 créditos. 3.766 triângulos. Jarro largo com duas cintas de ferro, tampa verde-petróleo e argola. Agradável e tranquilizador, como pedido. O corpo veio cinza-claro quase branco. |
 | 2026-10-06 | Tingida de graça (`scripts/tingir_textura.py`, cinzas de brilho ≥ 0,30 → `#8fa6ba`) | 51% da textura. O corpo vira azul-acinzentado e se destaca do Centro cor de creme; as cintas (mais escuras) ficam como estão. Original preservado em `model.glb`; o jogo usa `model_azul.glb`. |
 | 2026-10-06 | Integrada no jogo | Altura 1,5, sobre o Centro. Testada nas três fases (`?debug&teste=cisterna`: 17 de 17). |
-| — | Aprovação do visual (Alexandre) | Pendente |
+| 2026-10-06 | Aprovação do visual (Alexandre) | Aprovado |

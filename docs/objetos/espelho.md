@@ -43,4 +43,4 @@ Negativo: `face, person, eye, occult, pentagram, skull, realistic, high detail, 
 | 2026-10-06 | Tripo `text_to_model`, P1, `face_limit=4000` (task `8db86a7a`) | 40 créditos. 3.870 triângulos. Moldura dourada com raios de sol, vidro azul-claro sem rosto, suporte curto. Fiel à ficha. Os raios são pontudos, mas lidos como sol, não como ameaça. |
 | 2026-10-06 | Integrado no jogo | Altura 2,0, sobre o Centro; balança devagar ±0,5 rad, "procurando o melhor ângulo" (o vidro fica escuro de certos ângulos por causa da luz). Testado nas três fases (`?debug&teste=espelho`: 9 de 9). |
 | 2026-10-06 | Ajuste de jogo | As ilhas vizinhas passaram a secar 3× mais rápido na rachadura do Espelho (0,012/s): antes a queda era imperceptível. Os aplausos passaram a aparecer em volta do jogador (as ilhas vizinhas muitas vezes ficam fora da tela). |
-| — | Aprovação do visual (Alexandre) | Pendente |
+| 2026-10-06 | Aprovação do visual (Alexandre) | Aprovado |
