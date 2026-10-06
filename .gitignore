@@ -3,5 +3,8 @@ node_modules/
 scratchpad/
 # Estado local da tripo-cli (última tarefa)
 .tripo/
-# Os FBX do Mixamo FICAM no repositório: são a fonte para remontar os GLB
-# (scripts/montar_personagem_glb.py). Sem eles, seria preciso refazer tudo no Mixamo.
+# Downloads do Mixamo NÃO vão para o repositório público: os termos da Adobe permitem usar as
+# animações dentro do jogo (nos GLB), mas não redistribuir os arquivos brutos. Ficam só no disco
+# de quem montou; para remontar, baixe de novo no Mixamo (lista de clipes em docs/personagens/).
+# Os assets/mixamo/*_para_mixamo.fbx são nossos (modelos do Tripo) e continuam versionados.
+assets/mixamo/*/
