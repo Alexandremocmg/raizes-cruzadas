@@ -1,0 +1,29 @@
+{
+  "task_id": "b8bc24bd-7f68-4c5f-81b0-61ba18eb564d",
+  "type": "text_to_model",
+  "status": "success",
+  "input": {
+    "pbr": true,
+    "prompt": "Low-poly stylized game prop, an ancient wide low heptagonal stone pedestal with seven sides, about five times wider than it is tall, with a flat smooth empty top surface. Cream-white weathered stone, the sides gently carved with intertwining root patterns, small patches of soft green moss around the base and a few tiny pale pink and cream flowers growing at its foot. Faceted flat-shaded style with simple rounded shapes, soft warm pastel colors, smooth flat textures, single isolated object, no background.",
+    "texture": true,
+    "export_uv": true,
+    "face_limit": 4000,
+    "model_version": "P1-20260311",
+    "negative_prompt": "statue, figure, person, idol, skull, candles, fire, text, runes, symbols, cross, realistic, high detail, scenery",
+    "texture_alignment": "geometry"
+  },
+  "output_fields": [
+    "model_url",
+    "rendered_image_url",
+    "generated_image_url"
+  ],
+  "credits_consumed": 40,
+  "created_at": "2026-10-06T18:31:41.896259Z",
+  "completed_at": "2026-10-06T18:33:00.564607Z",
+  "files": [
+    "model.glb",
+    "rendered_image.webp",
+    "generated_image.jpeg",
+    "preview.png"
+  ]
+}

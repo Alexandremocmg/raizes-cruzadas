@@ -1,0 +1,29 @@
+{
+  "task_id": "5a19c59d-4f78-4351-8774-88154b0606df",
+  "type": "text_to_model",
+  "status": "success",
+  "input": {
+    "pbr": true,
+    "prompt": "Low-poly stylized game character, a kind elderly grandmother, faceted flat-shaded style with simple rounded shapes. Long loose lilac dress reaching the ankles, slightly bell-shaped, and a cream shawl draped over her shoulders and crossed in front. Grey hair tied in a low bun, round friendly face with warm peach skin, rosy cheeks, simple dark dot eyes and a gentle smile. Simple dark brown shoes. Standing upright in T-pose with arms straight out to the sides and free from the shawl, facing forward, symmetrical, empty hands. Soft warm pastel colors, smooth flat textures, no background, no props, no walking stick.",
+    "texture": true,
+    "export_uv": true,
+    "face_limit": 6000,
+    "model_version": "P1-20260311",
+    "negative_prompt": "realistic, photorealistic, wrinkles detail, high detail, walking stick, cane, hunched, text, base, pedestal, scenery",
+    "texture_alignment": "geometry"
+  },
+  "output_fields": [
+    "model_url",
+    "rendered_image_url",
+    "generated_image_url"
+  ],
+  "credits_consumed": 40,
+  "created_at": "2026-10-06T16:21:56.097991Z",
+  "completed_at": "2026-10-06T16:22:54.488946Z",
+  "files": [
+    "model.glb",
+    "rendered_image.webp",
+    "generated_image.jpeg",
+    "preview.png"
+  ]
+}

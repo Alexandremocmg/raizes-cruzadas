@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Raízes Cruzadas</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;800&display=swap">
+  <link rel="stylesheet" href="css/style.css">
+  <!-- Three.js via CDN (ES Modules), sem bundler — mesmo esquema do esconde-ou-morre. -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="rotulos"></div>
+
+  <div id="hud" class="hidden">
+    <div class="pill" id="agua" title="Água que você carrega"><span class="gota"></span><span id="aguaN">0</span></div>
+    <button class="pill" id="btnDiario">📖 Diário</button>
+  </div>
+
+  <div id="fala" class="hidden"></div>
+  <div id="acoes"></div>
+  <div id="toast" class="hidden"></div>
+
+  <div id="overlay" class="hidden"><div class="painel"></div></div>
+
+  <div id="inicio">
+    <div class="titulo">
+      <p class="sobre">protótipo · capítulo 1</p>
+      <h1>Raízes Cruzadas</h1>
+      <p class="lema">O que está no centro sustenta — ou pesa sobre — todo o resto.</p>
+      <button id="btnComecar" class="btn primario">Começar</button>
+      <p class="dica">Teclado: <b>WASD</b> ou setas para andar · <b>E</b> para agir<br>Celular: toque no chão para andar e nos botões para agir</p>
+    </div>
+  </div>
+
+  <script src="src/aviso-arquivo.js"></script>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>

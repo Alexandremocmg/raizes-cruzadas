@@ -1,0 +1,7 @@
+.env
+node_modules/
+scratchpad/
+# Estado local da tripo-cli (última tarefa)
+.tripo/
+# Os FBX do Mixamo FICAM no repositório: são a fonte para remontar os GLB
+# (scripts/montar_personagem_glb.py). Sem eles, seria preciso refazer tudo no Mixamo.

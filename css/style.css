@@ -1,0 +1,175 @@
+:root {
+  --creme: rgba(255, 249, 238, 0.92);
+  --tinta: #3a2f2a;
+  --tinta-suave: #6d5d52;
+  --ouro: #f3b94d;
+  --agua: #39c3d6;
+  --sombra: 0 10px 30px rgba(40, 30, 20, 0.25);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: #10141f;
+  font-family: 'Nunito', system-ui, sans-serif;
+  color: var(--tinta);
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+#c { display: block; width: 100vw; height: 100vh; touch-action: none; }
+
+.hidden { display: none !important; }
+
+/* ---------- HUD ---------- */
+#hud {
+  position: fixed; top: 14px; left: 14px;
+  display: flex; gap: 8px; z-index: 5;
+}
+.pill {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px; border-radius: 999px; border: 0;
+  background: var(--creme); color: var(--tinta);
+  font: 800 16px 'Nunito', sans-serif; box-shadow: var(--sombra);
+}
+button.pill { cursor: pointer; }
+button.pill.novo { box-shadow: 0 0 0 3px var(--ouro), var(--sombra); }
+.gota {
+  width: 12px; height: 16px; background: var(--agua);
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+  transform: rotate(0deg); box-shadow: 0 0 10px var(--agua);
+}
+#agua.pulsa { animation: pulsa 0.4s ease; }
+@keyframes pulsa { 50% { transform: scale(1.15); } }
+
+/* ---------- Fala (narração) ---------- */
+#fala {
+  position: fixed; top: 64px; left: 50%; transform: translateX(-50%);
+  width: min(560px, calc(100vw - 32px));
+  padding: 14px 20px; border-radius: 18px;
+  background: var(--creme); box-shadow: var(--sombra);
+  font-size: 17px; line-height: 1.45; text-align: center; z-index: 6;
+  animation: entra 0.5s ease;
+}
+#fala b { display: block; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--tinta-suave); margin-bottom: 2px; }
+@keyframes entra { from { opacity: 0; transform: translate(-50%, -8px); } }
+
+/* ---------- Ações ---------- */
+#acoes {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-wrap: wrap; justify-content: center; gap: 8px;
+  width: min(720px, calc(100vw - 32px)); z-index: 5;
+}
+.acao {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 12px 18px; border-radius: 14px; border: 0; cursor: pointer;
+  background: var(--creme); color: var(--tinta); box-shadow: var(--sombra);
+  font: 700 16px 'Nunito', sans-serif;
+  animation: entraAcao 0.25s ease;
+}
+.acao:hover { background: #fff; }
+.acao kbd {
+  font: 800 12px 'Nunito', sans-serif; padding: 2px 7px; border-radius: 6px;
+  background: var(--tinta); color: #fff;
+}
+@keyframes entraAcao { from { opacity: 0; transform: translateY(6px); } }
+
+/* ---------- Rótulos e textos flutuantes ---------- */
+#rotulos { position: fixed; inset: 0; pointer-events: none; z-index: 3; }
+.rotulo {
+  position: absolute; left: 0; top: 0; white-space: nowrap;
+  padding: 3px 10px; border-radius: 999px;
+  background: rgba(255, 249, 238, 0.8); font: 700 13px 'Nunito', sans-serif;
+}
+.flutua {
+  position: absolute; left: 0; top: 0; white-space: nowrap;
+  font: 800 15px 'Nunito', sans-serif; color: #fff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.55);
+  animation: sobe 2.4s ease-out forwards;
+}
+@keyframes sobe {
+  from { opacity: 0; margin-top: 0; }
+  15% { opacity: 1; }
+  to { opacity: 0; margin-top: -60px; }
+}
+
+#toast {
+  position: fixed; top: 14px; right: 14px; z-index: 7;
+  padding: 10px 16px; border-radius: 12px;
+  background: var(--tinta); color: #fff; font-weight: 700; box-shadow: var(--sombra);
+  animation: entraAcao 0.3s ease;
+}
+
+/* ---------- Overlay ---------- */
+#overlay {
+  position: fixed; inset: 0; z-index: 10;
+  display: grid; place-items: center; padding: 16px;
+  background: rgba(16, 20, 34, 0.55); backdrop-filter: blur(4px);
+}
+.painel {
+  position: relative; width: min(640px, 100%); max-height: calc(100vh - 32px); overflow: auto;
+  padding: 26px 26px 22px; border-radius: 22px;
+  background: #fff9ee; box-shadow: var(--sombra); line-height: 1.5;
+  animation: entraAcao 0.3s ease;
+}
+.painel h2 { margin: 0 0 8px; font-size: 26px; }
+.painel h3 { margin: 18px 0 6px; }
+.painel .nota { color: var(--tinta-suave); font-size: 14px; margin-top: 0; }
+.painel .fechar {
+  position: absolute; top: 10px; right: 12px; border: 0; background: none;
+  font-size: 28px; cursor: pointer; color: var(--tinta-suave);
+}
+.opcoes { display: grid; gap: 10px; margin-top: 14px; }
+.opcao {
+  text-align: left; padding: 14px 16px; border-radius: 14px; cursor: pointer;
+  border: 2px solid #eadcc6; background: #fff; font: 600 15px 'Nunito', sans-serif; color: var(--tinta);
+}
+.opcao b { display: block; font-size: 17px; }
+.opcao:hover { border-color: var(--ouro); }
+.opcao.fonte { border-color: #9fe7f0; background: linear-gradient(135deg, #f2feff, #fff); }
+
+.btn {
+  padding: 12px 20px; border-radius: 14px; border: 2px solid #eadcc6; cursor: pointer;
+  background: #fff; font: 700 16px 'Nunito', sans-serif; color: var(--tinta); margin: 6px 6px 0 0;
+}
+.btn.primario { background: var(--tinta); border-color: var(--tinta); color: #fff; }
+
+/* Caverna do Outro Olho */
+.cartas { display: grid; gap: 8px; margin-top: 10px; }
+.carta {
+  text-align: left; padding: 12px 14px; border-radius: 12px; cursor: pointer;
+  border: 2px dashed #cdbba3; background: #fff; font: 600 15px 'Nunito', sans-serif; color: var(--tinta);
+}
+.carta.certa { border-style: solid; border-color: var(--ouro); background: #fff5dc; cursor: default; }
+.carta.errada { animation: treme 0.5s; border-color: #d98b7a; }
+@keyframes treme { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+.cav-msg { min-height: 1.5em; color: var(--tinta-suave); }
+.resultado { background: #f6efe2; padding: 12px 14px; border-radius: 12px; }
+
+/* Diário */
+.pagina { border-top: 1px solid #eadcc6; padding-top: 6px; margin-top: 12px; }
+.pagina blockquote { margin: 8px 0; padding: 8px 14px; border-left: 4px solid var(--ouro); background: #fdf4e2; font-style: italic; }
+.pagina cite { display: block; margin-top: 4px; font-style: normal; font-weight: 700; font-size: 13px; color: var(--tinta-suave); }
+.pagina .pergunta { font-weight: 700; }
+
+/* ---------- Tela inicial ---------- */
+#inicio {
+  position: fixed; inset: 0; z-index: 20;
+  display: grid; place-items: center; padding: 16px;
+  background: radial-gradient(ellipse at center, rgba(16, 20, 34, 0.25), rgba(16, 20, 34, 0.75));
+  text-align: center; color: #fff9ee;
+}
+#inicio h1 { margin: 0; font-size: clamp(40px, 9vw, 76px); font-weight: 800; letter-spacing: 0.01em; text-shadow: 0 4px 30px rgba(255, 210, 140, 0.45); }
+#inicio .sobre { margin: 0; letter-spacing: 0.2em; text-transform: uppercase; font-size: 13px; opacity: 0.8; }
+#inicio .lema { font-size: 18px; opacity: 0.92; margin: 10px 0 26px; }
+#inicio .dica { font-size: 14px; opacity: 0.75; margin-top: 22px; line-height: 1.6; }
+#inicio .btn.primario { background: #fff9ee; color: var(--tinta); border-color: #fff9ee; font-size: 18px; padding: 14px 34px; }
+
+@media (max-width: 600px) {
+  #fala { font-size: 15px; top: 60px; }
+  .acao { font-size: 15px; padding: 12px 14px; }
+  .acao kbd { display: none; }
+}

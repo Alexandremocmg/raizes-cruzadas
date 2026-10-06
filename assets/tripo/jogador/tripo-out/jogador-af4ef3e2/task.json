@@ -1,0 +1,29 @@
+{
+  "task_id": "af4ef3e2-2a68-4d0f-8b99-40c3fd26fac2",
+  "type": "text_to_model",
+  "status": "success",
+  "input": {
+    "pbr": true,
+    "prompt": "Low-poly stylized game character, a gentle young traveler with a gender-neutral look, faceted flat-shaded style with simple rounded shapes. Knee-length cream tunic slightly bell-shaped with a simple brown belt, a small ochre water gourd hanging from the right side of the belt, and a turquoise scarf around the neck with one long loose tail. Short soft brown hair, warm medium peach skin, simple dark dot eyes and a calm small smile. Sand-colored trousers and low brown leather boots. Full body, standing in T-pose with arms straight out to the sides, facing forward, symmetrical, empty hands. Soft warm pastel colors, smooth flat textures, no background, no props in hands.",
+    "texture": true,
+    "export_uv": true,
+    "face_limit": 6000,
+    "model_version": "P1-20260311",
+    "negative_prompt": "realistic, photorealistic, high detail, armor, weapon, sword, cape, crown, text, base, pedestal, scenery",
+    "texture_alignment": "geometry"
+  },
+  "output_fields": [
+    "model_url",
+    "rendered_image_url",
+    "generated_image_url"
+  ],
+  "credits_consumed": 40,
+  "created_at": "2026-10-06T12:55:30.970113Z",
+  "completed_at": "2026-10-06T12:56:27.592019Z",
+  "files": [
+    "model.glb",
+    "rendered_image.webp",
+    "generated_image.jpeg",
+    "preview.png"
+  ]
+}

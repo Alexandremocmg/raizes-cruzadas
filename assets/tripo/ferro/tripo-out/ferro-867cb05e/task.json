@@ -1,0 +1,29 @@
+{
+  "task_id": "867cb05e-5288-4f07-9661-3c01c1319f51",
+  "type": "text_to_model",
+  "status": "success",
+  "input": {
+    "pbr": true,
+    "prompt": "Low-poly stylized game character, a tall tired man with a guarded weary expression, not villainous, faceted flat-shaded style with simple rounded shapes. Long knee-length blue-grey coat with a high collar, worn and patched, with one faded pale-yellow patch on the chest and dusty dry-earth stains near the hem, the coat open at the front so both legs are clearly separate. A worn dark grey scarf with frayed ends around the neck. Short messy dark brown hair and short stubble beard, tanned peach skin, simple dark dot eyes under slightly lowered brows, neutral straight mouth. Heavy brown boots with dried dirt on the toes. Standing in T-pose with arms straight out to the sides, slightly slumped shoulders, facing forward, symmetrical, empty hands. Muted soft colors, smooth flat textures, no background, no props.",
+    "texture": true,
+    "export_uv": true,
+    "face_limit": 6000,
+    "model_version": "P1-20260311",
+    "negative_prompt": "realistic, photorealistic, high detail, evil, villain, angry, scars, red eyes, black clothes, weapon, armor, text, base, pedestal, scenery",
+    "texture_alignment": "geometry"
+  },
+  "output_fields": [
+    "model_url",
+    "rendered_image_url",
+    "generated_image_url"
+  ],
+  "credits_consumed": 40,
+  "created_at": "2026-10-06T16:33:13.623150Z",
+  "completed_at": "2026-10-06T16:34:41.996692Z",
+  "files": [
+    "model.glb",
+    "rendered_image.webp",
+    "generated_image.jpeg",
+    "preview.png"
+  ]
+}
