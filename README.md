@@ -8,6 +8,10 @@ e escolhe o que vai ocupar o **centro** da sua ilha. Coisas boas no lugar errado
 reconhecimento, alguém que você ama) prometem, depois exigem e por fim racham tudo. Até que você
 descobre o que sempre correu por baixo de todas as ilhas.
 
+### ▶ [Jogar agora no navegador](https://alexandremocmg.github.io/raizes-cruzadas/)
+
+Funciona no PC e no celular, sem instalar nada. Um capítulo dura de 15 a 20 minutos.
+
 **Projeto aberto e feito em comunidade.** Para ajudar, veja o [guia de contribuição](CONTRIBUTING.md).
 
 Visão completa, mecânicas, Bíblia Visual e plano de assets: [`docs/GDD.md`](docs/GDD.md).
