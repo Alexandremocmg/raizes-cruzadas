@@ -1,0 +1,29 @@
+{
+  "task_id": "fffdbbcf-4a7c-4a7c-9cc2-008da6061a43",
+  "type": "text_to_model",
+  "status": "success",
+  "input": {
+    "pbr": true,
+    "prompt": "Low-poly stylized game prop, a big round water storage cistern shaped like a wide squat barrel-jar, glazed blue-grey ceramic body, two dark iron bands around it, a heavy dark teal lid with a small iron padlock, sealed and sturdy but pleasant and reassuring looking, not scary. Faceted flat-shaded style with simple rounded shapes, soft pastel colors, smooth flat textures, single isolated object, no background, no ground.",
+    "texture": true,
+    "export_uv": true,
+    "face_limit": 4000,
+    "model_version": "P1-20260311",
+    "negative_prompt": "cracks, broken, skull, spikes, evil, realistic, high detail, water spill, text, person, scenery",
+    "texture_alignment": "geometry"
+  },
+  "output_fields": [
+    "model_url",
+    "rendered_image_url",
+    "generated_image_url"
+  ],
+  "credits_consumed": 40,
+  "created_at": "2026-10-06T20:25:25.884778Z",
+  "completed_at": "2026-10-06T20:26:50.627160Z",
+  "files": [
+    "model.glb",
+    "rendered_image.webp",
+    "generated_image.jpeg",
+    "preview.png"
+  ]
+}

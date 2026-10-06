@@ -190,6 +190,8 @@ def exportar(arm, mesh):
         use_selection=True,
         export_format="GLB",
         export_draco_mesh_compression_enable=False,
+        export_image_format="JPEG",  # texturas em JPEG: bem menores que PNG, sem perda visível aqui
+        export_jpeg_quality=85,
         export_animations=True,
         export_animation_mode="ACTIONS",
         export_bake_animation=True,

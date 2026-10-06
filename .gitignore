@@ -8,3 +8,7 @@ scratchpad/
 # de quem montou; para remontar, baixe de novo no Mixamo (lista de clipes em docs/personagens/).
 # Os assets/mixamo/*_para_mixamo.fbx são nossos (modelos do Tripo) e continuam versionados.
 assets/mixamo/*/
+
+# Intermediários grandes que se regeneram a partir do model.glb original com os scripts de scripts/
+# (recolorir_textura.py, tingir_textura.py). O jogo usa só model_web.glb (scripts/otimizar_glb.py).
+assets/tripo/*/tripo-out/*/model_azul.glb

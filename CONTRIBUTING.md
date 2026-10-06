@@ -39,6 +39,12 @@ Os arquivos brutos do Mixamo **não** ficam no repositório (termos da Adobe). P
 personagem, suba o `assets/mixamo/<nome>_para_mixamo.fbx` no Mixamo, baixe os clipes listados na
 ficha dele e coloque em `assets/mixamo/<nome>/`.
 
+## Testar antes de enviar
+Rode os testes automáticos (veja a tabela no [README](README.md#testes-automáticos)) pelo menos
+`jornada` e `salvar` se você mexeu na lógica do jogo. Um teste que falha mostra, em `window.__teste.log`,
+exatamente qual passo quebrou. Ao criar uma mecânica nova, acrescente um cenário em
+`src/teste-auto.js`.
+
 ## Regras
 - **Nunca** envie arquivos `.env`, chaves de API ou dados pessoais.
 - Mensagens de commit e documentação em português.

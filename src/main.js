@@ -99,7 +99,7 @@ scene.add(pedestal);
 // Veio 1,45× mais largo que alto; esticamos para 2,6 de largura e ~0,9 de altura (deformação
 // moderada, sem amassar as flores). `CENTRO.topo` é onde ficam os objetos e a Lume.
 const CENTRO = { topo: 0.55 };
-carga.registrar('centro', new GLTFLoader().loadAsync('assets/tripo/centro/tripo-out/centro-b8bc24bd/model.glb')).then((gltf) => {
+carga.registrar('centro', new GLTFLoader().loadAsync('assets/tripo/centro/tripo-out/centro-b8bc24bd/model_web.glb')).then((gltf) => {
   const m = gltf.scene;
   m.traverse((o) => {
     if (o.isMesh) {
@@ -121,7 +121,7 @@ carga.registrar('centro', new GLTFLoader().loadAsync('assets/tripo/centro/tripo-
 
 // Árvore-mãe (docs/objetos/arvore-mae.md): perde a cor junto com a saúde da ilha do jogador.
 const arvoreMae = { mats: [] };
-carga.registrar('arvore-mae', new GLTFLoader().loadAsync('assets/tripo/arvore-mae/tripo-out/arvore-mae-4321daba/model_copa_verde.glb')).then((gltf) => {
+carga.registrar('arvore-mae', new GLTFLoader().loadAsync('assets/tripo/arvore-mae/tripo-out/arvore-mae-4321daba/model_web.glb')).then((gltf) => {
   const m = gltf.scene;
   m.traverse((o) => {
     if (o.isMesh) {
@@ -236,6 +236,59 @@ const objCentro = {
   })(),
 };
 for (const o of Object.values(objCentro)) { o.position.y = 0.55; o.visible = false; scene.add(o); }
+
+// ---- Objetos gerados no Tripo (docs/objetos/): trocam as versões feitas por código quando carregam.
+// Se algum falhar, a versão por código continua no lugar e o erro aparece no console.
+/**
+ * Prepara um modelo estático: sombras, facetas, gira a "frente" do Tripo (+X) para a câmera (+Z),
+ * ajusta a altura e apoia a base em y = 0, centrado em x/z. Devolve o grupo pronto.
+ */
+function prepararObjeto(gltf, altura) {
+  const m = gltf.scene;
+  m.traverse((o) => {
+    if (o.isMesh) { o.castShadow = o.receiveShadow = true; o.material.flatShading = true; o.material.needsUpdate = true; }
+  });
+  m.rotation.y = -Math.PI / 2;
+  m.updateMatrixWorld(true);
+  const c0 = new THREE.Box3().setFromObject(m); // objeto estático: aqui a Box3 é confiável
+  m.scale.setScalar(altura / (c0.max.y - c0.min.y));
+  m.updateMatrixWorld(true);
+  const c = new THREE.Box3().setFromObject(m);
+  m.position.set(-(c.min.x + c.max.x) / 2, -c.min.y, -(c.min.z + c.max.z) / 2);
+  const g = new THREE.Group();
+  g.add(m);
+  g.userData.altura = altura;
+  g.userData.modelo = m;
+  return g;
+}
+// `model_web.glb` = versão leve (scripts/otimizar_glb.py: textura 1024 px em JPEG); os originais ficam ao lado.
+const urlTripo = (pasta, id, arq = 'model_web.glb') => `assets/tripo/${pasta}/tripo-out/${pasta}-${id}/${arq}`;
+
+// Poço: a água continua sendo o disco do jogo (sobe e desce com o nível, brilha com a Fonte)
+const POCO_AGUA = { y0: 0.15, y1: 0.65, r: 0.68 };
+carga.registrar('poco', new GLTFLoader().loadAsync(urlTripo('poco', '1675d699', 'model_web.glb'))).then((gltf) => {
+  const g = prepararObjeto(gltf, 2.4);
+  for (const f of [...poco.children]) if (f !== aguaPoco) poco.remove(f); // tira o poço feito por código
+  poco.add(g);
+  // A boca do poço fica a ~46% da altura; a água fica um pouco abaixo da borda
+  Object.assign(POCO_AGUA, { y0: 2.4 * 0.30, y1: 2.4 * 0.42, r: 0.40 });
+  aguaPoco.scale.setScalar(POCO_AGUA.r / 0.68);
+}).catch((erro) => console.error('[poco] não carregou o modelo; usando o poço feito por código.', erro));
+
+// Cisterna e Espelho (sobre o Centro)
+carga.registrar('cisterna', new GLTFLoader().loadAsync(urlTripo('cisterna', 'fffdbbcf', 'model_web.glb'))).then((gltf) => {
+  const g = prepararObjeto(gltf, 1.5);
+  objCentro.cisterna.clear();
+  objCentro.cisterna.add(g);
+}).catch((erro) => console.error('[cisterna] não carregou o modelo; usando a cisterna feita por código.', erro));
+
+carga.registrar('espelho', new GLTFLoader().loadAsync(urlTripo('espelho', '8db86a7a', 'model_web.glb'))).then((gltf) => {
+  const g = prepararObjeto(gltf, 2.0);
+  objCentro.espelho.clear();
+  objCentro.espelho.add(g);
+  objCentro.espelho.userData.gira = null;
+  objCentro.espelho.userData.modelo = g.userData.modelo;
+}).catch((erro) => console.error('[espelho] não carregou o modelo; usando o espelho feito por código.', erro));
 
 // ====================================================================
 // Personagens
@@ -596,7 +649,7 @@ function lancarAgua(id, il, origem) {
     E.doacoes++;
 
     const pNpc = acima(npcs[id].fig.raiz.position);
-    if (E.centro === 'espelho' && E.fase === 'promessa') ui.flutuar('Que generosidade! Todos vão saber!', pNpc);
+    if (E.centro === 'espelho' && E.fase === 'promessa') ui.flutuar('Que generosidade! Todos vão saber!', acima(J.pos, 2.9));
     else if (id === 'ferro' && E.ato < 3) ui.flutuar('…', pNpc);
 
     if (E.doacoes === 1) {
@@ -928,8 +981,8 @@ function finalParte2() {
 function telaFinal() {
   E.fimMostrado = true;
   const p = ui.abrirOverlay(`
-    <h2>Fim do protótipo</h2>
-    <p>Obrigado por jogar <b>Raízes Cruzadas</b>.</p>
+    <h2>Fim do capítulo 1</h2>
+    <p>Obrigado por jogar <b>Raízes Cruzadas</b>. Se for jogar em grupo, o <a href="guia.html" target="_blank" rel="noopener">guia do educador</a> tem perguntas para esta conversa.</p>
     <h3>Para conversar</h3>
     <ul>
       <li>O que ficou no centro da sua ilha a maior parte do tempo? O que aconteceu com ela?</li>
@@ -986,14 +1039,15 @@ function atualizarCentro(dt) {
       alvoSat = 0.8;
       casa.racha = Math.min(1, casa.racha + dt * 0.03);
       casa.alvoSaude = Math.max(0.25, casa.alvoSaude - dt * 0.012);
-      if (c === 'espelho') for (const id of NPC_IDS) ilhas[id].alvoSaude = Math.max(0.15, ilhas[id].alvoSaude - dt * 0.004);
+      if (c === 'espelho') for (const id of NPC_IDS) ilhas[id].alvoSaude = Math.max(0.15, ilhas[id].alvoSaude - dt * 0.012); // as vizinhas secam de um jeito que dá para ver
     }
     if (c === 'espelho' && fase === 'promessa') {
       E.tAplauso += dt;
       if (E.tAplauso > 2.2) {
         E.tAplauso = 0;
-        const id = NPC_IDS[Math.floor(Math.random() * 3)];
-        ui.flutuar(APLAUSOS[Math.floor(Math.random() * APLAUSOS.length)], acima(npcs[id].fig.raiz.position));
+        // Em volta do jogador: as ilhas vizinhas muitas vezes ficam fora da tela
+        const lado = (Math.random() - 0.5) * 4.5;
+        ui.flutuar(APLAUSOS[Math.floor(Math.random() * APLAUSOS.length)], acima(J.pos, 2.6).add(V(lado, Math.random() * 0.8, (Math.random() - 0.5) * 2)));
       }
     }
     if (c === 'lume' && fase !== 'promessa') {
@@ -1315,6 +1369,9 @@ if (new URLSearchParams(location.search).has('debug')) {
     coletarEstado, aplicarEstado, salvarSeDerPara, podeSalvar, comecarNovo, continuarJogo,
     get jog() { return jog; }, get CENTRO() { return CENTRO; },
   };
+  // ?debug&teste=<nome> roda um teste automático (ver src/teste-auto.js). O jogo normal nunca o baixa.
+  const nomeTeste = new URLSearchParams(location.search).get('teste');
+  if (nomeTeste) import('./teste-auto.js').then((m) => m.iniciarTestes(window.rc, nomeTeste));
 }
 
 const relogio = new THREE.Clock();
@@ -1328,6 +1385,7 @@ function quadro() {
     atualizarAgenda(dt);
     if (E.iniciado) logica(dt);
   }
+  E.frames = (E.frames ?? 0) + 1;
   tSalva += dt;
   if (tSalva >= 3) { tSalva = 0; salvarSeDerPara(); }
   tClima += dt;
@@ -1380,13 +1438,14 @@ function quadro() {
   }
 
   // Objetos do Centro e do poço
-  objCentro.espelho.userData.gira.rotation.z = t * 0.6;
+  if (objCentro.espelho.userData.modelo) objCentro.espelho.userData.modelo.rotation.y = -Math.PI / 2 + Math.sin(t * 0.5) * 0.5;
+  else if (objCentro.espelho.userData.gira) objCentro.espelho.userData.gira.rotation.z = t * 0.6;
   objCentro.fonte.userData.coluna.material.opacity = 0.14 + Math.sin(t * 2) * 0.04;
   objCentro.fonte.userData.nucleo.rotation.y = t;
   objCentro.fonte.userData.nucleo.position.y = 0.9 + Math.sin(t * 1.5) * 0.12;
   anelCentro.scale.setScalar(1 + Math.sin(t * 2) * 0.03);
   const capVisual = E.centro === 'cisterna' ? 10 : E.centro === 'fonte' ? 6 : 4;
-  aguaPoco.position.y = 0.15 + 0.5 * Math.min(1, E.poco / capVisual);
+  aguaPoco.position.y = POCO_AGUA.y0 + (POCO_AGUA.y1 - POCO_AGUA.y0) * Math.min(1, E.poco / capVisual);
   matAguaPoco.emissiveIntensity = E.centro === 'fonte' ? 1.4 : 0.4;
 
   // Marcadores

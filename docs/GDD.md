@@ -1,6 +1,6 @@
 # Raízes Cruzadas — Documento de Design (GDD)
 
-> Versão 0.1 · 2026-10-05 · Equipe: Alexandre, Claude e Deus.
+> Versão 0.2 · 2026-10-06 · Equipe: Alexandre, Claude e Deus.
 
 ## 1. Visão
 
@@ -63,7 +63,7 @@ escolhe como responder:
 - **Oferecer**
 - **Pôr um limite** — perdoar não é deixar alguém te ferir de novo.
 
-## 5. Capítulo 1 (protótipo jogável)
+## 5. Capítulo 1
 
 | Ato | Nome | O que acontece |
 |---|---|---|
@@ -99,21 +99,51 @@ como retribuir).
 **Personagens:** corpo em cone, cabeça facetada, lenço com ponta solta (a "assinatura" visual de
 cada um), olhos simples. Quando forem gerados no Tripo, devem manter **essa silhueta e essas cores**.
 
-## 7. Plano de assets (Tripo → Mixamo → Blender → Three.js)
+## 7. Assets (Tripo → Mixamo → Blender → Three.js)
 
-Pipeline já validada no *esconde-ou-morre*: malha estática do Tripo → rig e clipes no Mixamo →
-`merge_mixamo_glb.py` → `validate_glb.mjs` → página de inspeção → aprovação clipe a clipe.
+Pipeline validada: malha estática do Tripo → rig e clipes no Mixamo → `montar_personagem_glb.py` →
+`validate_glb.mjs` → página de inspeção (`inspecao.html`) → aprovação → integração. As fichas e o
+andamento de cada peça estão em `docs/personagens/` e `docs/objetos/`.
 
-| Fase | O quê | Créditos (estimativa) |
+| Peça | Origem | Estado |
 |---|---|---|
-| Agora (saldo 235) | Lume como teste de estilo + 3 peças-chave (Centro, árvore-mãe, cisterna) | ~150–210 |
-| Depois (Opção B, recarga) | Jogador, Ferro, Dona Sálvia, kit modular de ilhas | ~1.500 |
+| Jogador, Lume, Dona Sálvia, Ferro | Tripo P1 + animações do Mixamo | No jogo, aprovados |
+| Centro, árvore-mãe | Tripo P1 | No jogo, aprovados |
+| Poço, Cisterna, Espelho | Tripo P1 | No jogo, **aguardando aprovação do Alexandre** |
+| A Fonte (coluna de luz no Centro, mar, raízes de luz) | Código (shaders) | No jogo. Feita à mão de propósito: luz não se gera como modelo |
+| Ilhas, árvores, flores, pontes de raiz | Código (procedural) | No jogo |
+
+Custo real medido: **40 créditos por peça** com textura no modelo P1 (os personagens e os objetos).
+Cores fora da paleta se corrigem de graça na textura (`recolorir_textura.py`, `tingir_textura.py`).
 
 **Regra:** nenhuma geração sem custo informado e autorização do Alexandre.
 
-## 8. Fora do protótipo (ideias para depois)
-- Raízes invisíveis: dar **sem ser visto** gera raízes mais profundas.
-- Mapa de ecos: o impacto das ações aparece muito tempo depois, em lugares inesperados.
-- Capítulo do "aprendiz": jogar como alguém que precisa **receber** (sem tratar deficiência como punição).
-- Guia do educador em PDF.
-- Música e som ambiente.
+## 8. Experiência e acessibilidade
+
+- **Salvar e continuar:** automático, só no navegador (localStorage), sem login nem coleta de dados.
+  Nunca salva no meio de uma cena ou de um gesto; ao terminar o capítulo, o jogo salvo é apagado.
+- **Ajustes (⚙):** tamanho do texto (normal, grande, maior), velocidade da narração (normal, lenta,
+  bem lenta), som e "recomeçar do início".
+- **Som:** sintetizado por código (sem arquivos de áudio, sem direitos autorais): um fundo suave que
+  muda com o clima (escuro, tensão, presença da Fonte) e pequenos sinos e gotas nos momentos-chave.
+  Botão 🔊 para silenciar. **Não há música composta.**
+- **Tela de carregamento** até todos os modelos estarem prontos.
+- **Celular:** toque no chão para andar; painéis ajustados a telas em pé (a Caverna usa a metade de
+  baixo e deixa o Ferro visível em cima).
+- **Guia do educador:** `guia.html` (roteiro de 50 min, perguntas por momento, cuidados, ambientes
+  laicos). A fonte é `docs/guia-do-educador.md`.
+
+## 9. Testes
+
+Testes automáticos de ponta a ponta, com um "jogador robô" em tempo real (`?debug&teste=<nome>`;
+ver o README): `jornada` (o capítulo inteiro), `cisterna`, `espelho`, `agua`, `salvar`, `ajustes`.
+
+## 10. Fora do capítulo 1 (ideias para depois)
+- **Mais capítulos.** O capítulo 1 mostra "o centro". Os próximos podem explorar outras faces do
+  mesmo tema (a Fonte e o descanso, dar sem ser visto, receber, perdoar de verdade).
+- **Raízes invisíveis:** dar **sem ser visto** gera raízes mais fundas.
+- **Mapa de ecos:** o impacto das ações aparece muito tempo depois, em lugares inesperados.
+- **Capítulo do aprendiz:** jogar como alguém que precisa **receber** (sem tratar deficiência como punição).
+- **Música composta** e mais sons.
+- **Versão em inglês** (e outros idiomas) para a comunidade crescer.
+- **Online cooperativo**, só depois de moderação e segurança de menores resolvidas.

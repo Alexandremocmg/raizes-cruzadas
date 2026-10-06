@@ -1,0 +1,29 @@
+{
+  "task_id": "8db86a7a-31b6-444a-9e4e-ed58a5110e2b",
+  "type": "text_to_model",
+  "status": "success",
+  "input": {
+    "pbr": true,
+    "prompt": "Low-poly stylized game prop, an elegant round standing mirror with a thick golden frame decorated with small sun rays pointing outward, a short ornate golden stand, and a polished pale sky-blue glass surface that reflects only soft light (no face, no reflection of a person). Faceted flat-shaded style with simple rounded shapes, soft warm pastel colors, smooth flat textures, single isolated object, no background, no ground.",
+    "texture": true,
+    "export_uv": true,
+    "face_limit": 4000,
+    "model_version": "P1-20260311",
+    "negative_prompt": "face, person, eye, occult, pentagram, skull, realistic, high detail, text, scenery",
+    "texture_alignment": "geometry"
+  },
+  "output_fields": [
+    "model_url",
+    "rendered_image_url",
+    "generated_image_url"
+  ],
+  "credits_consumed": 40,
+  "created_at": "2026-10-06T20:27:16.057913Z",
+  "completed_at": "2026-10-06T20:28:28.760232Z",
+  "files": [
+    "model.glb",
+    "rendered_image.webp",
+    "generated_image.jpeg",
+    "preview.png"
+  ]
+}
