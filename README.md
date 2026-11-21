@@ -77,6 +77,10 @@ endereços e consulte `window.__teste` no console (`log`, `falhas`, `fim`):
 | `docs/` | GDD, fichas visuais e andamento de cada personagem e objeto (`personagens/`, `objetos/`) |
 | `CHANGELOG.md` | Histórico de versões |
 
+## Publicação
+
+O jogo está publicado em **https://raizes.kabemmanager.online**, numa VPS própria. A atualização é manual (`git pull` na VPS); um `git push` não muda o que está no ar. O passo a passo, as dependências externas e como voltar atrás estão em [docs/hospedagem-vps.md](docs/hospedagem-vps.md).
+
 ## Licença
 
 Código sob **MIT** ([`LICENSE`](LICENSE)). História, textos, documentos e modelos 3D sob

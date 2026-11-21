@@ -2,6 +2,11 @@
 
 Formato livre, do mais novo para o mais antigo. Datas no formato ano-mês-dia.
 
+## Publicação na VPS (2026-11-21)
+
+**Para quem mantém**
+- O jogo passou a ser servido também em https://raizes.kabemmanager.online (VPS própria, HTTPS). A atualização é manual. Veja `docs/hospedagem-vps.md`.
+
 ## 1.0 — Capítulo 1 pronto para grupos (2026-10-06)
 
 **Para quem joga**
